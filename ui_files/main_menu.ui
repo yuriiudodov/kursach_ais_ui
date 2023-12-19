@@ -2,17 +2,47 @@
 <ui version="4.0">
  <class>Widget</class>
  <widget class="QWidget" name="Widget">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>800</width>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>600</width>
     <height>600</height>
-   </rect>
+   </size>
   </property>
   <property name="windowTitle">
-   <string>Widget</string>
+   <string>Главное Меню</string>
   </property>
+  <widget class="QPushButton" name="licensesPushButton">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>570</y>
+     <width>221</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>подсистемы управления лицензиями</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="orderPushButton">
+   <property name="geometry">
+    <rect>
+     <x>480</x>
+     <y>570</y>
+     <width>191</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>выпустить заказ поставщику</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>
