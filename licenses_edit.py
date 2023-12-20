@@ -48,6 +48,7 @@ class Ui_Form(object):
         self.pk=pk
         self.name=name
         self.date=date
+        self.date1=date
         self.expiration_date = expiration_date
         self.license_key = license_key
     def setupUi(self, Form):
@@ -115,9 +116,10 @@ class Ui_Form(object):
 
         self.gridLayout.addWidget(self.label, 2, 1, 1, 1)
 
+        print(self.date)
         self.licenseNameLineEdit.setText(self.name)#vot tut hyeta
-        self.dateEdit.setDate(QDate.fromString(self.date, "dd.MM.yyyy"))
-        self.expirationDateEdit.setDate(QDate.fromString(str(self.expiration_date), "dd.MM.yyyy"))
+        self.dateEdit.setDate(QDate.fromString(self.date, "d.M.yyyy"))
+        self.expirationDateEdit.setDate(QDate.fromString(str(self.expiration_date), "d.M.yyyy"))
         self.keyTextEdit.setText(self.license_key)
 
         self.retranslateUi(Form)
