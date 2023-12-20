@@ -18,9 +18,16 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QApplication, QPushButton, QSizePolicy, QWidget, QDialog)
 
 import licenses_view
+import order_choose_organisations
 
 
 class Ui_Widget(object):
+
+    def open_order_creation(self):  # opens order_choose_organisations.py
+        self.window = QDialog()
+        self.ui = order_choose_organisations.Ui_Form()
+        self.ui.setupUi(self.window)
+        self.window.show()
 
     def open_license_manager(self):  # opens licenses manager (licenses_view.py)
         self.window = QDialog()
@@ -39,7 +46,7 @@ class Ui_Widget(object):
         self.licensesPushButton = QPushButton(Widget, clicked = lambda: self.open_license_manager())
         self.licensesPushButton.setObjectName(u"licensesPushButton")
         self.licensesPushButton.setGeometry(QRect(90, 570, 221, 41))
-        self.orderPushButton = QPushButton(Widget)
+        self.orderPushButton = QPushButton(Widget, clicked = lambda: self.open_order_creation())
         self.orderPushButton.setObjectName(u"orderPushButton")
         self.orderPushButton.setGeometry(QRect(480, 570, 191, 31))
 

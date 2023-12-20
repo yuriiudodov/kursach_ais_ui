@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1017</width>
+    <height>695</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>741</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>20</pointsize>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Заказ поставщику №             от </string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>70</y>
+     <width>91</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>11</pointsize>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Поставщик:</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_3">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>110</y>
+     <width>91</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>11</pointsize>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Покупатель:</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_5">
+   <property name="geometry">
+    <rect>
+     <x>290</x>
+     <y>10</y>
+     <width>81</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>20</pointsize>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>N</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_6">
+   <property name="geometry">
+    <rect>
+     <x>420</x>
+     <y>10</y>
+     <width>81</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>20</pointsize>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>DATE</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_4">
+   <property name="geometry">
+    <rect>
+     <x>110</x>
+     <y>90</y>
+     <width>691</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>11</pointsize>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>supplier</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_7">
+   <property name="geometry">
+    <rect>
+     <x>110</x>
+     <y>130</y>
+     <width>781</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>11</pointsize>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>customer</string>
+   </property>
+  </widget>
+  <widget class="QTableWidget" name="positionsTableWidget">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>190</y>
+     <width>721</width>
+     <height>371</height>
+    </rect>
+   </property>
+   <column>
+    <property name="text">
+     <string>ном</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Имя</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>цена</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>кол-во</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>сумма</string>
+    </property>
+   </column>
+  </widget>
+  <widget class="QPushButton" name="addPushButton">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>580</y>
+     <width>141</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Добавить </string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="deletePushButton">
+   <property name="geometry">
+    <rect>
+     <x>170</x>
+     <y>580</y>
+     <width>141</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Удалить</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="createOrderPushButton">
+   <property name="geometry">
+    <rect>
+     <x>600</x>
+     <y>580</y>
+     <width>141</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Выпустить</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="createOrderPushButton_2">
+   <property name="geometry">
+    <rect>
+     <x>870</x>
+     <y>20</y>
+     <width>141</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>отмена</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
