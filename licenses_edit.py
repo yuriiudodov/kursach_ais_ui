@@ -15,12 +15,36 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
+from PySide6.QtSql import QSqlDatabase, QSqlQuery
 from PySide6.QtWidgets import (QApplication, QDateEdit, QGridLayout, QLabel,
     QLineEdit, QPushButton, QSizePolicy, QTextEdit,
     QWidget)
 
+import parameters
+
+
 class Ui_Form(object):
-    def transfer_data(self, name, date, expiration_date, license_key):
+
+    def write_license_to_db(self):
+        DB_PATH = parameters.DB_PATH  # bezvremennoe reshenie
+        VetDbConnnection = QSqlDatabase.addDatabase("QSQLITE")
+        VetDbConnnection.setDatabaseName(DB_PATH)
+        VetDbConnnection.open()
+        VetTableQuery = QSqlQuery()
+        VetTableQuery.prepare("""
+                                 UPDATE licenses SET license_name=:license_name, date=:date, expration_date=:expiration_date, license_key=:license_key WHERE pk=:pk
+                                  """)
+        VetTableQuery.bindValue("::license_name", self.licenseNameLineEdit.text())
+        VetTableQuery.bindValue(":date", parameters.date_format(self.dateEdit.date().getDate()))
+        VetTableQuery.bindValue(":expiration_date", parameters.date_format(self.expirationDateEdit.date().getDate()))
+        VetTableQuery.bindValue(":license_key", self.keyTextEdit.toPlainText())
+
+        VetTableQuery.bindValue(":pk", self.pk)
+        uspeh = VetTableQuery.exec()
+        print("USPEH BLYAT&", uspeh)
+        VetDbConnnection.close()
+    def transfer_data(self, pk, name, date, expiration_date, license_key):
+        self.pk=pk
         self.name=name
         self.date=date
         self.expiration_date = expiration_date
@@ -89,7 +113,7 @@ class Ui_Form(object):
         self.gridLayout.addWidget(self.label, 2, 1, 1, 1)
 
         self.licenseNameLineEdit.setText(self.name)
-        print( "self.date", self.date)
+        print(self.name, self.license_key)
         self.dateEdit.setDate(QDate.fromString(self.date, "dd.MM.yyyy"))
         self.expirationDateEdit.setDate(QDate.fromString(self.expiration_date, "dd.MM.yyyy"))
         self.keyTextEdit.setText(self.license_key)
