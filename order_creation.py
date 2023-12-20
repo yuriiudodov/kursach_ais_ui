@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import pandas as pd
 ################################################################################
 ## Form generated from reading UI file 'order_creation.ui'
 ##
@@ -17,16 +17,30 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QHeaderView, QLabel, QPushButton,
     QSizePolicy, QTableWidget, QTableWidgetItem, QWidget)
+from sqlalchemy import create_engine, text
 
 import parameters
 
 
 class Ui_Form(object):
-
+    order_num=parameters.just_give_doc_number()#pk+1
     def transfer_data(self, customer, supplier, date):
         self.customer=customer
         self.supplier=supplier
         self.date=date
+
+    def refresh_order_entries_table(self): #aka positions table widget
+        DB_PATH = parameters.DB_PATH  # bezvremennoe reshenie
+        TABLE_ROW_LIMIT = 10
+        db_connection = create_engine(f'sqlite:///{DB_PATH}').connect()
+
+        data_for_table = pd.read_sql(text(f'SELECT pk, name, price, count, (count*price) FROM order_entry WHERE related_to_order={int(self.order_num)}'), db_connection).astype(str)
+        self.positionsTableWidget.setRowCount(len(data_for_table))
+
+        for col_num in range(len(data_for_table.columns)):
+            for row_num in range(len(data_for_table)):
+                self.positionsTableWidget.setItem(row_num, col_num,
+                                                 QTableWidgetItem(data_for_table.iloc[row_num, col_num]))
 
     def setupUi(self, Form):
         if not Form.objectName():
@@ -54,7 +68,7 @@ class Ui_Form(object):
         self.label_5.setObjectName(u"label_5")
         self.label_5.setGeometry(QRect(290, 10, 81, 61))
         self.label_5.setFont(font)
-        self.label_5.setText(parameters.just_give_doc_number())
+        self.label_5.setText(self.order_num)
 
         self.label_6 = QLabel(Form)#order date
         self.label_6.setObjectName(u"label_6")
@@ -102,6 +116,8 @@ class Ui_Form(object):
         self.createOrderPushButton_2 = QPushButton(Form)
         self.createOrderPushButton_2.setObjectName(u"createOrderPushButton_2")
         self.createOrderPushButton_2.setGeometry(QRect(870, 20, 141, 81))
+
+        self.refresh_order_entries_table()
 
         self.retranslateUi(Form)
 
