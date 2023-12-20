@@ -35,9 +35,8 @@ class Ui_Form(object):
         VALUES (:license_name, :date, :expiration_date, :key)"""
         VetTableQuery.prepare(vet_query_str)
         VetTableQuery.bindValue(":license_name", self.licenseNameLineEdit.text())
-        print(self.dateEdit.date().getDate())
-        VetTableQuery.bindValue(":date", self.dateEdit.date().getDate())
-        VetTableQuery.bindValue(":expiration_date", self.expirationDateEdit.date().getDate())
+        VetTableQuery.bindValue(":date", parameters.date_format(self.dateEdit.date().getDate()))
+        VetTableQuery.bindValue(":expiration_date", parameters.date_format(self.expirationDateEdit.date().getDate()))
 
 
         uspeh = VetTableQuery.exec()

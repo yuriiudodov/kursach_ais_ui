@@ -20,6 +20,11 @@ from PySide6.QtWidgets import (QApplication, QDateEdit, QGridLayout, QLabel,
     QWidget)
 
 class Ui_Form(object):
+    def transfer_data(self, name, date, expiration_date, license_key):
+        self.name=name
+        self.date=date
+        self.expiration_date = expiration_date
+        self.license_key = license_key
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
@@ -67,7 +72,7 @@ class Ui_Form(object):
 
         self.gridLayout.addWidget(self.dateEdit, 6, 1, 1, 1)
 
-        self.pushButton = QPushButton(Form, clicked = lambda: Form.close())#close button
+        self.pushButton = QPushButton(Form, clicked = lambda: Form.close())  #close button
         self.pushButton.setObjectName(u"pushButton")
         self.pushButton.setMinimumSize(QSize(100, 100))
         self.pushButton.setMaximumSize(QSize(230, 16777215))
@@ -83,6 +88,11 @@ class Ui_Form(object):
 
         self.gridLayout.addWidget(self.label, 2, 1, 1, 1)
 
+        self.licenseNameLineEdit.setText(self.name)
+        print( "self.date", self.date)
+        self.dateEdit.setDate(QDate.fromString(self.date, "dd.MM.yyyy"))
+        self.expirationDateEdit.setDate(QDate.fromString(self.expiration_date, "dd.MM.yyyy"))
+        self.keyTextEdit.setText(self.license_key)
 
         self.retranslateUi(Form)
 

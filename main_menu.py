@@ -27,7 +27,6 @@ class Ui_Widget(object):
         self.ui = licenses_view.Ui_Form()
         self.ui.setupUi(self.window)
         self.window.show()
-
     def setupUi(self, Widget):
         if not Widget.objectName():
             Widget.setObjectName(u"Widget")
