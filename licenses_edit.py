@@ -59,6 +59,7 @@ class Ui_Form(object):
         self.expirationDateEdit = QDateEdit(Form)
         self.expirationDateEdit.setObjectName(u"expirationDateEdit")
 
+
         self.gridLayout.addWidget(self.expirationDateEdit, 7, 1, 1, 1)
 
         self.label_3 = QLabel(Form)
@@ -95,6 +96,7 @@ class Ui_Form(object):
         self.dateEdit = QDateEdit(Form)
         self.dateEdit.setObjectName(u"dateEdit")
 
+
         self.gridLayout.addWidget(self.dateEdit, 6, 1, 1, 1)
 
         self.pushButton = QPushButton(Form, clicked = lambda: Form.close())  #close button
@@ -113,10 +115,9 @@ class Ui_Form(object):
 
         self.gridLayout.addWidget(self.label, 2, 1, 1, 1)
 
-        self.licenseNameLineEdit.setText(self.name)
-        print(self.expiration_date, self.date)
+        self.licenseNameLineEdit.setText(self.name)#vot tut hyeta
         self.dateEdit.setDate(QDate.fromString(self.date, "dd.MM.yyyy"))
-        self.expirationDateEdit.setDate(QDate.fromString(self.expiration_date, "dd.MM.yyyy"))
+        self.expirationDateEdit.setDate(QDate.fromString(str(self.expiration_date), "dd.MM.yyyy"))
         self.keyTextEdit.setText(self.license_key)
 
         self.retranslateUi(Form)
