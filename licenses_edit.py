@@ -25,6 +25,7 @@ import parameters
 
 class Ui_Form(object):
 
+
     def write_license_to_db(self):
         DB_PATH = parameters.DB_PATH  # bezvremennoe reshenie
         VetDbConnnection = QSqlDatabase.addDatabase("QSQLITE")
@@ -32,16 +33,16 @@ class Ui_Form(object):
         VetDbConnnection.open()
         VetTableQuery = QSqlQuery()
         VetTableQuery.prepare("""
-                                 UPDATE licenses SET license_name=:license_name, date=:date, expration_date=:expiration_date, license_key=:license_key WHERE pk=:pk
+                                UPDATE license SET license_name=:license_name, date=:date, expiration_date=:expiration_date, key=:license_key WHERE pk=:pk
                                   """)
-        VetTableQuery.bindValue("::license_name", self.licenseNameLineEdit.text())
+        VetTableQuery.bindValue(":license_name", self.licenseNameLineEdit.text())
         VetTableQuery.bindValue(":date", parameters.date_format(self.dateEdit.date().getDate()))
         VetTableQuery.bindValue(":expiration_date", parameters.date_format(self.expirationDateEdit.date().getDate()))
         VetTableQuery.bindValue(":license_key", self.keyTextEdit.toPlainText())
 
         VetTableQuery.bindValue(":pk", self.pk)
         uspeh = VetTableQuery.exec()
-        print("USPEH BLYAT&", uspeh)
+        print("USPEH BLYAT&", uspeh, VetTableQuery.lastQuery())
         VetDbConnnection.close()
     def transfer_data(self, pk, name, date, expiration_date, license_key):
         self.pk=pk
@@ -65,7 +66,7 @@ class Ui_Form(object):
 
         self.gridLayout.addWidget(self.label_3, 6, 0, 1, 1)
 
-        self.confirmButton = QPushButton(Form)
+        self.confirmButton = QPushButton(Form, clicked = lambda: self.write_license_to_db())
         self.confirmButton.setObjectName(u"confirmButton")
         sizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -113,7 +114,7 @@ class Ui_Form(object):
         self.gridLayout.addWidget(self.label, 2, 1, 1, 1)
 
         self.licenseNameLineEdit.setText(self.name)
-        print(self.name, self.license_key)
+        #print(self.name, self.license_key, self.expiration_date, self.date)
         self.dateEdit.setDate(QDate.fromString(self.date, "dd.MM.yyyy"))
         self.expirationDateEdit.setDate(QDate.fromString(self.expiration_date, "dd.MM.yyyy"))
         self.keyTextEdit.setText(self.license_key)
@@ -127,18 +128,8 @@ class Ui_Form(object):
         Form.setWindowTitle(QCoreApplication.translate("Form", u"\u0420\u0435\u0434\u0430\u043a\u0442\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u0435 \u041b\u0438\u0446\u0435\u043d\u0437\u0438\u0438", None))
         self.label_3.setText(QCoreApplication.translate("Form", u"\u0414\u0435\u0439\u0441\u0442\u0432\u0438\u0442\u0435\u043b\u0435\u043d \u0441:", None))
         self.confirmButton.setText(QCoreApplication.translate("Form", u"\u043f\u043e\u0434\u0442\u0432\u0435\u0440\u0434\u0438\u0442\u044c", None))
-        self.keyTextEdit.setMarkdown("")
-        self.keyTextEdit.setHtml(QCoreApplication.translate("Form", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"hr { height: 1px; border-width: 0; }\n"
-"li.unchecked::marker { content: \"\\2610\"; }\n"
-"li.checked::marker { content: \"\\2612\"; }\n"
-"</style></head><body style=\" font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>", None))
         self.keyTextEdit.setPlaceholderText(QCoreApplication.translate("Form", u"\u041b\u0438\u0446\u0435\u043d\u0437\u0438\u043e\u043d\u043d\u044b\u0439 \u043a\u043b\u044e\u0447...", None))
         self.label_2.setText(QCoreApplication.translate("Form", u"\u043f\u043e:", None))
-        self.licenseNameLineEdit.setText("")
         self.licenseNameLineEdit.setPlaceholderText(QCoreApplication.translate("Form", u"\u041f\u0440\u043e\u0433\u0440\u0430\u043c\u043c\u043d\u044b\u0439 \u043f\u0440\u043e\u0434\u0443\u043a\u0442", None))
         self.pushButton.setText(QCoreApplication.translate("Form", u"\u041e\u0442\u043c\u0435\u043d\u0438\u0442\u044c", None))
         self.label.setText(QCoreApplication.translate("Form", u"\u0420\u0435\u0434\u0430\u043a\u0442\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u0435 \u041b\u0438\u0446\u0435\u043d\u0437\u0438\u0438", None))
