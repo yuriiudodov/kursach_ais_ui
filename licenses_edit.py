@@ -114,7 +114,7 @@ class Ui_Form(object):
         self.gridLayout.addWidget(self.label, 2, 1, 1, 1)
 
         self.licenseNameLineEdit.setText(self.name)
-        #print(self.name, self.license_key, self.expiration_date, self.date)
+        print(self.expiration_date, self.date)
         self.dateEdit.setDate(QDate.fromString(self.date, "dd.MM.yyyy"))
         self.expirationDateEdit.setDate(QDate.fromString(self.expiration_date, "dd.MM.yyyy"))
         self.keyTextEdit.setText(self.license_key)
