@@ -9,6 +9,8 @@ import licenses_view
 #     pyside6-uic form.ui -o ui_form.py, or
 #     pyside2-uic form.ui -o ui_form.py
 from main_menu import Ui_Widget
+from parameters import create_new_order
+
 
 class Widget(QWidget):
     def __init__(self, parent=None):

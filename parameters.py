@@ -1,3 +1,7 @@
+import pandas as pd
+from PySide6.QtSql import QSqlDatabase, QSqlQuery
+from sqlalchemy import create_engine, text
+
 DB_PATH = "DB.sqlite3"
 def date_format(date):
     date_day=str(date[2])
@@ -5,7 +9,29 @@ def date_format(date):
     date_year=str(date[0])
     formated_date = date_day + "." + date_month + "." + date_year
     return formated_date
+def just_give_doc_number():
+    TABLE_ROW_LIMIT = 10
+    db_connection = create_engine(f'sqlite:///{DB_PATH}').connect()
 
+    data_for_table = pd.read_sql(text(f'SELECT * FROM orderj ORDER BY pk DESC'), db_connection).astype(str)
+    return (str(data_for_table.iloc[0]['pk']))
+def create_new_order():
+
+    TABLE_ROW_LIMIT = 10
+    db_connection = create_engine(f'sqlite:///{DB_PATH}').connect()
+
+    data_for_table = pd.read_sql(text(f'SELECT * FROM orderj ORDER BY pk DESC'), db_connection).astype(str)
+    return(data_for_table.count())
+
+    VetDbConnnection = QSqlDatabase.addDatabase("QSQLITE")
+    VetDbConnnection.setDatabaseName(DB_PATH)
+    VetDbConnnection.open()
+    VetTableQuery = QSqlQuery()
+    VetTableQuery.prepare("""
+                             INSERT INTO orderj (kostyl) VALUES ('ass')
+                             """)
+    uspeh = VetTableQuery.exec()
+    VetDbConnnection.close()
     # def refresh_customers_table(self):
     #     DB_PATH = parameters.DB_PATH  # bezvremennoe reshenie
     #     TABLE_ROW_LIMIT = 10

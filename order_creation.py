@@ -18,6 +18,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QApplication, QHeaderView, QLabel, QPushButton,
     QSizePolicy, QTableWidget, QTableWidgetItem, QWidget)
 
+import parameters
+
+
 class Ui_Form(object):
 
     def transfer_data(self, customer, supplier, date):
@@ -51,7 +54,7 @@ class Ui_Form(object):
         self.label_5.setObjectName(u"label_5")
         self.label_5.setGeometry(QRect(290, 10, 81, 61))
         self.label_5.setFont(font)
-        self.label_5.setText("1488")
+        self.label_5.setText(parameters.just_give_doc_number())
 
         self.label_6 = QLabel(Form)#order date
         self.label_6.setObjectName(u"label_6")
