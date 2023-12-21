@@ -19,11 +19,17 @@ from PySide6.QtWidgets import (QApplication, QHeaderView, QLabel, QPushButton,
                                QSizePolicy, QTableWidget, QTableWidgetItem, QWidget, QDialog)
 from sqlalchemy import create_engine, text
 
+import docs_browser
 import order_add_position
 import parameters
 
 
 class Ui_Form(object):
+
+    def change_order(self, order_num):
+        self.order_num = order_num
+        self.label_5.setText(str(self.order_num))
+        self.refresh_order_entries_table()
 
     def __init__(self):
         self.order_num = parameters.just_give_doc_number()#pk+1 dayot nomer dokumenta dalya interfeisa, iz nego mozhno poluchit pk documenta otnyav 1
@@ -35,6 +41,12 @@ class Ui_Form(object):
         self.label_5.setText(str(self.order_num))
         self.refresh_order_entries_table()
 
+    def open_docs_browser(self):#add order entry window
+        self.window = QDialog()
+        self.ui = docs_browser.Ui_widget()
+        self.ui.transfer_form_pointer(self)
+        self.ui.setupUi(self.window)
+        self.window.show()
 
     def open_order_add_position(self):#add order entry window
         self.window = QDialog()
@@ -52,7 +64,7 @@ class Ui_Form(object):
         TABLE_ROW_LIMIT = 10
         db_connection = create_engine(f'sqlite:///{DB_PATH}').connect()
 
-        data_for_table = pd.read_sql(text(f'SELECT pk, name, price, count, (count*price) FROM order_entry WHERE related_to_order={int(self.order_num)}'), db_connection).astype(str)
+        data_for_table = pd.read_sql(text(f'SELECT pk, name, price, count, (count*price) FROM order_entry WHERE related_to_order={str(self.order_num)}'), db_connection).astype(str)
         self.positionsTableWidget.setRowCount(len(data_for_table))
 
         for col_num in range(len(data_for_table.columns)):
@@ -135,6 +147,10 @@ class Ui_Form(object):
         self.newOrderPushButton.setObjectName(u"createOrderPushButton_2")
         self.newOrderPushButton.setGeometry(QRect(870, 20, 141, 81))
 
+        self.openDocsBrowserPushButton = QPushButton(Form, clicked=lambda: self.open_docs_browser())  # new order idk
+        self.openDocsBrowserPushButton.setObjectName(u"createOrderPushButton_2")
+        self.openDocsBrowserPushButton.setGeometry(QRect(800, 160, 141, 81))
+
         self.refresh_order_entries_table()
 
         self.retranslateUi(Form)
@@ -165,5 +181,6 @@ class Ui_Form(object):
         self.deletePushButton.setText(QCoreApplication.translate("Form", u"\u0423\u0434\u0430\u043b\u0438\u0442\u044c", None))
         self.createOrderPushButton.setText(QCoreApplication.translate("Form", u"\u0412\u044b\u043f\u0443\u0441\u0442\u0438\u0442\u044c", None))
         self.newOrderPushButton.setText("новый")
+        self.openDocsBrowserPushButton.setText("МЕНЕДЖЕР")
     # retranslateUi
 
