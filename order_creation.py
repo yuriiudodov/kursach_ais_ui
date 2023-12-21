@@ -36,10 +36,10 @@ class Ui_Form(object):
         self.refresh_order_entries_table()
 
 
-    def open_order_add_position(self):
+    def open_order_add_position(self):#add order entry window
         self.window = QDialog()
         self.ui = order_add_position.Ui_Form()
-        #self.ui.transfer_data("PMC Wagner", "PMC Redan", str(parameters.date_format(self.dateEdit.date().getDate())))
+        self.ui.transfer_data(self.order_num, self)#vozmozhno oshibka i nado otnyat 1, ya v ujase pochemy ono rabotaet
         self.ui.setupUi(self.window)
         self.window.show()
     def transfer_data(self, customer, supplier, date):

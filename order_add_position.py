@@ -15,6 +15,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
+from PySide6.QtSql import QSqlDatabase, QSqlQuery
 from PySide6.QtWidgets import (QApplication, QHeaderView, QLabel, QLineEdit,
     QPushButton, QSizePolicy, QSpinBox, QTableWidget,
     QTableWidgetItem, QWidget)
@@ -24,6 +25,27 @@ import parameters
 
 
 class Ui_Form(object):
+
+    def transfer_data(self, order_pk, mother_form):
+        self.order_pk=order_pk
+        self.mother_form=mother_form
+
+
+    def add_position_to_order(self):#add order entry
+
+
+        VetDbConnnection = QSqlDatabase.addDatabase("QSQLITE")
+        VetDbConnnection.setDatabaseName(parameters.DB_PATH)
+        VetDbConnnection.open()
+        VetTableQuery = QSqlQuery()
+        VetTableQuery.prepare(
+                f"INSERT INTO order_entry (name, count, price, related_to_order, sum) "
+                f"VALUES ('{self.goodsTableWidget.item(self.goodsTableWidget.currentRow(), 1 ).text()}','{str(self.countSpinBox.value())}','{self.priceLineEdit.text()}','{self.order_pk}','{self.label.text()}')"
+                 )
+        uspeh = VetTableQuery.exec()
+        VetDbConnnection.close()
+        self.mother_form.refresh_order_entries_table()
+
 
 
 
@@ -43,7 +65,7 @@ class Ui_Form(object):
         if not Form.objectName():
             Form.setObjectName(u"Form")
         Form.resize(834, 519)
-        self.confirmPushButton = QPushButton(Form)
+        self.confirmPushButton = QPushButton(Form, clicked = lambda:self.add_position_to_order())
         self.confirmPushButton.setObjectName(u"confirmPushButton")
         self.confirmPushButton.setGeometry(QRect(670, 460, 121, 51))
         self.cancelPushButton = QPushButton(Form)
