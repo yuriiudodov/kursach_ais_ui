@@ -1,4 +1,5 @@
 import pandas as pd
+from PySide6.QtCore import QDate
 from PySide6.QtSql import QSqlDatabase, QSqlQuery
 from sqlalchemy import create_engine, text
 
@@ -24,11 +25,9 @@ def create_new_order():
 
     VetDbConnnection = QSqlDatabase.addDatabase("QSQLITE")
     VetDbConnnection.setDatabaseName(DB_PATH)
-    VetDbConnnection.open()
+    VetDbConnnection.open() #INSERT INTO orderj (kostyl, date) VALUES
     VetTableQuery = QSqlQuery()
-    VetTableQuery.prepare("""
-                             INSERT INTO orderj (kostyl) VALUES ('ass')
-                             """)
+    VetTableQuery.prepare(f"INSERT INTO orderj (kostyl, date) VALUES ('ass','{str(date_format(QDate.currentDate().getDate()))}')")
     uspeh = VetTableQuery.exec()
     VetDbConnnection.close()
     return (str(data_for_table.iloc[0]['pk']))
