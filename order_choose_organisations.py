@@ -29,7 +29,7 @@ class Ui_Form(object):
     def open_order_creation(self):
         self.window = QDialog()
         self.ui = order_creation.Ui_Form()
-        self.ui.transfer_data("PMC Wagner","PMC Redan", str(parameters.date_format(self.dateEdit.date().getDate())))
+        self.ui.transfer_data(self.customerTableWidget.item(self.customerTableWidget.currentRow(), 1).text(),self.supplierTableWidget.item(self.supplierTableWidget.currentRow(), 1).text(), str(parameters.date_format(self.dateEdit.date().getDate())))
         self.ui.setupUi(self.window)
         self.window.show()
 
