@@ -16,14 +16,32 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QHeaderView, QLabel, QPushButton,
-    QSizePolicy, QTableWidget, QTableWidgetItem, QWidget)
+                               QSizePolicy, QTableWidget, QTableWidgetItem, QWidget, QDialog)
 from sqlalchemy import create_engine, text
 
+import order_add_position
 import parameters
 
 
 class Ui_Form(object):
-    order_num=parameters.just_give_doc_number()#pk+1
+
+    def __init__(self):
+        self.order_num = parameters.just_give_doc_number()#pk+1 dayot nomer dokumenta dalya interfeisa, iz nego mozhno poluchit pk documenta otnyav 1
+
+    def create_new_order(self):
+        parameters.create_new_order()
+        #new_order_pk = new_order_number-1
+        self.order_num=parameters.just_give_doc_number()
+        self.label_5.setText(str(self.order_num))
+        self.refresh_order_entries_table()
+
+
+    def open_order_add_position(self):
+        self.window = QDialog()
+        self.ui = order_add_position.Ui_Form()
+        #self.ui.transfer_data("PMC Wagner", "PMC Redan", str(parameters.date_format(self.dateEdit.date().getDate())))
+        self.ui.setupUi(self.window)
+        self.window.show()
     def transfer_data(self, customer, supplier, date):
         self.customer=customer
         self.supplier=supplier
@@ -104,7 +122,7 @@ class Ui_Form(object):
         self.positionsTableWidget.setHorizontalHeaderItem(4, __qtablewidgetitem4)
         self.positionsTableWidget.setObjectName(u"positionsTableWidget")
         self.positionsTableWidget.setGeometry(QRect(20, 190, 721, 371))
-        self.addPushButton = QPushButton(Form)
+        self.addPushButton = QPushButton(Form, clicked = lambda: self.open_order_add_position())
         self.addPushButton.setObjectName(u"addPushButton")
         self.addPushButton.setGeometry(QRect(20, 580, 141, 81))
         self.deletePushButton = QPushButton(Form)
@@ -113,9 +131,9 @@ class Ui_Form(object):
         self.createOrderPushButton = QPushButton(Form)
         self.createOrderPushButton.setObjectName(u"createOrderPushButton")
         self.createOrderPushButton.setGeometry(QRect(600, 580, 141, 81))
-        self.createOrderPushButton_2 = QPushButton(Form)
-        self.createOrderPushButton_2.setObjectName(u"createOrderPushButton_2")
-        self.createOrderPushButton_2.setGeometry(QRect(870, 20, 141, 81))
+        self.newOrderPushButton = QPushButton(Form, clicked = lambda:self.create_new_order())#new order idk
+        self.newOrderPushButton.setObjectName(u"createOrderPushButton_2")
+        self.newOrderPushButton.setGeometry(QRect(870, 20, 141, 81))
 
         self.refresh_order_entries_table()
 
@@ -146,6 +164,6 @@ class Ui_Form(object):
         self.addPushButton.setText(QCoreApplication.translate("Form", u"\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c ", None))
         self.deletePushButton.setText(QCoreApplication.translate("Form", u"\u0423\u0434\u0430\u043b\u0438\u0442\u044c", None))
         self.createOrderPushButton.setText(QCoreApplication.translate("Form", u"\u0412\u044b\u043f\u0443\u0441\u0442\u0438\u0442\u044c", None))
-        self.createOrderPushButton_2.setText(QCoreApplication.translate("Form", u"\u043e\u0442\u043c\u0435\u043d\u0430", None))
+        self.newOrderPushButton.setText("новый")
     # retranslateUi
 

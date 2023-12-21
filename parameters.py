@@ -21,7 +21,6 @@ def create_new_order():
     db_connection = create_engine(f'sqlite:///{DB_PATH}').connect()
 
     data_for_table = pd.read_sql(text(f'SELECT * FROM orderj ORDER BY pk DESC'), db_connection).astype(str)
-    return(data_for_table.count())
 
     VetDbConnnection = QSqlDatabase.addDatabase("QSQLITE")
     VetDbConnnection.setDatabaseName(DB_PATH)
@@ -32,6 +31,7 @@ def create_new_order():
                              """)
     uspeh = VetTableQuery.exec()
     VetDbConnnection.close()
+    return (str(data_for_table.iloc[0]['pk']))
     # def refresh_customers_table(self):
     #     DB_PATH = parameters.DB_PATH  # bezvremennoe reshenie
     #     TABLE_ROW_LIMIT = 10

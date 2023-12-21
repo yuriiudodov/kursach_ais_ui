@@ -109,6 +109,7 @@ class Ui_Form(object):
 
         self.dateEdit = QDateEdit(Form)
         self.dateEdit.setObjectName(u"dateEdit")
+        self.dateEdit.setDate(QDate.currentDate())
 
         self.gridLayout.addWidget(self.dateEdit, 2, 3, 1, 1)
 
