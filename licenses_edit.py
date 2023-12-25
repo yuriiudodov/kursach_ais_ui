@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import pymongo
 ################################################################################
 ## Form generated from reading UI file 'license_edit.ui'
 ##
@@ -25,7 +25,25 @@ import parameters
 
 class Ui_Form(object):
 
+    def transfer_mother_form_pointer(self, mother_form_poiner):
+        self.licenses_view_pointer=mother_form_poiner
 
+    def mongo_write_license_to_db(self):  # add order entry mongo
+        client = pymongo.MongoClient("localhost", 27017)  # mongo penis
+        db = client.kursach_ais
+        order_entry_mongo = db.license
+        post ={
+                "license_name":self.licenseNameLineEdit.text(),
+                "date":parameters.date_format(self.dateEdit.date().getDate()),
+                "expiration_date": parameters.date_format(self.expirationDateEdit.date().getDate()),
+                "key": str(self.keyTextEdit.toPlainText()),
+        }
+        myquery = {"license_name": self.name,"date": self.date,"expiration_date": self.expiration_date,"key": self.license_key}
+        newvalues = {"$set": {"license_name": self.licenseNameLineEdit.text(),"date": parameters.date_format(self.dateEdit.date().getDate()),"expiration_date": parameters.date_format(self.expirationDateEdit.date().getDate()),"key": self.keyTextEdit.toPlainText(),"pk": self.pk}}
+
+        order_entry_mongo.update_one(myquery, newvalues)
+        self.licenses_view_pointer.refresh_license_table()
+        print(post, "edited")
     def write_license_to_db(self):
         DB_PATH = parameters.DB_PATH  # bezvremennoe reshenie
         VetDbConnnection = QSqlDatabase.addDatabase("QSQLITE")
@@ -43,6 +61,7 @@ class Ui_Form(object):
         VetTableQuery.bindValue(":pk", self.pk)
         uspeh = VetTableQuery.exec()
         print("USPEH BLYAT&", uspeh, VetTableQuery.lastQuery())
+        self.mongo_write_license_to_db()
         VetDbConnnection.close()
     def transfer_data(self, pk, name, date, expiration_date, license_key):
         self.pk=pk

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
+import pymongo
 ################################################################################
 ## Form generated from reading UI file 'order_add_position.ui'
 ##
@@ -31,6 +32,21 @@ class Ui_Form(object):
         self.mother_form=mother_form
 
 
+    def mongo_add_position_to_order(self):  # add order entry mongo
+        client = pymongo.MongoClient("localhost", 27017)  # mongo penis
+        db = client.kursach_ais
+        order_entry_mongo = db.order_entry
+        post ={ "pk":"0",#pk_autoincrement.autoincrement_max("order_entry"),
+                "name":self.goodsTableWidget.item(self.goodsTableWidget.currentRow(), 1 ).text(),
+                "count":str(self.countSpinBox.value()),
+                "price": self.priceLineEdit.text(),
+                "related_to_order":self.order_pk,
+                "sum": self.label.text(),
+        }
+        order_entry_mongo.insert_one(post)
+        print(post)
+
+
     def add_position_to_order(self):#add order entry
 
 
@@ -44,6 +60,7 @@ class Ui_Form(object):
                  )
         uspeh = VetTableQuery.exec()
         VetDbConnnection.close()
+        self.mongo_add_position_to_order()
         self.mother_form.refresh_order_entries_table()
 
 

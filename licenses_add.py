@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import pymongo
 ################################################################################
 ## Form generated from reading UI file 'license_add.ui'
 ##
@@ -25,6 +25,22 @@ import parameters
 
 class Ui_Form(object):
 
+    def transfer_mother_form_pointer(self, mother_form_poiner):
+        self.licenses_view_pointer=mother_form_poiner
+    def mongo_add_license_to_db(self):  # add order entry mongo
+        client = pymongo.MongoClient("localhost", 27017)  # mongo penis
+        db = client.kursach_ais
+        order_entry_mongo = db.license
+        post ={
+                "license_name":self.licenseNameLineEdit.text(),
+                "date":parameters.date_format(self.dateEdit.date().getDate()),
+                "expiration_date": parameters.date_format(self.expirationDateEdit.date().getDate()),
+                "key": str(self.keyTextEdit.toPlainText()),
+                "pk": self.licenses_view_pointer.licensesTableWidget.item(self.licenses_view_pointer.licensesTableWidget.rowCount()-1,0).text(),
+        }
+        order_entry_mongo.insert_one(post)
+        self.licenses_view_pointer.refresh_license_table()
+        print(post)
     def add_license_to_db(self):
         DB_PATH = parameters.DB_PATH  # bezvremennoe reshenie
         VetDbConnnection = QSqlDatabase.addDatabase("QSQLITE")
@@ -37,10 +53,12 @@ class Ui_Form(object):
         VetTableQuery.bindValue(":license_name", self.licenseNameLineEdit.text())
         VetTableQuery.bindValue(":date", parameters.date_format(self.dateEdit.date().getDate()))
         VetTableQuery.bindValue(":expiration_date", parameters.date_format(self.expirationDateEdit.date().getDate()))
-
+        VetTableQuery.bindValue(":key", str(self.keyTextEdit.toPlainText()))
 
         uspeh = VetTableQuery.exec()
         print(self.dateEdit.date().getDate(), uspeh)
+        self.licenses_view_pointer.refresh_license_table()
+        self.mongo_add_license_to_db()
         VetDbConnnection.close()
     def setupUi(self, Form):
         if not Form.objectName():

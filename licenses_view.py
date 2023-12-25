@@ -45,6 +45,7 @@ class Ui_Form(object):
         self.window = QDialog()
         self.ui = licenses_add.Ui_Form()
         self.ui.setupUi(self.window)
+        self.ui.transfer_mother_form_pointer(self)
         self.window.show()
 
     def open_license_edit(self):
@@ -52,6 +53,7 @@ class Ui_Form(object):
         self.ui = licenses_edit.Ui_Form()
         self.ui.transfer_data(self.licensesTableWidget.item(self.licensesTableWidget.currentRow(),0).text(),self.licensesTableWidget.item(self.licensesTableWidget.currentRow(),1).text(), self.licensesTableWidget.item(self.licensesTableWidget.currentRow(),2).text(), self.licensesTableWidget.item(self.licensesTableWidget.currentRow(),3).text(),self.licensesTableWidget.item(self.licensesTableWidget.currentRow(),4).text())
         self.ui.setupUi(self.window)
+        self.ui.transfer_mother_form_pointer(self)
         self.window.show()
 
     def refresh_license_table(self):
