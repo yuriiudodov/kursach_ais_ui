@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import pymongo
 ################################################################################
 ## Form generated from reading UI file 'licenses_view.ui'
 ##
@@ -28,18 +28,21 @@ import parameters
 
 
 class Ui_Form(object):
+    def refresh_license_table(self):
+        parameters.refresh_license_table(self)
 
-    def delete_license(self):
-        DB_PATH = parameters.DB_PATH  # bezvremennoe reshenie
-        VetDbConnnection = QSqlDatabase.addDatabase("QSQLITE")
-        VetDbConnnection.setDatabaseName(DB_PATH)
-        VetDbConnnection.open()
-        VetTableQuery = QSqlQuery()
-        vet_query_str="""DELETE FROM license WHERE pk =""" + self.licensesTableWidget.item(self.licensesTableWidget.currentRow(), 0).text()
-        VetTableQuery.prepare(vet_query_str)
+    def mongo_delete_license(self):
+        client = pymongo.MongoClient("localhost", 27017)  # mongo penis
+        db = client.kursach_ais
+        licenses_mongo = db.license
 
-        uspeh = VetTableQuery.exec()
-        VetDbConnnection.close()
+        myquery = {"pk": self.licensesTableWidget.item(self.licensesTableWidget.currentRow(), 0).text()}
+
+        licenses_mongo.delete_one(myquery)
+        parameters.delete_license(self)
+        self.refresh_license_table()
+
+
 
     def open_license_add(self):
         self.window = QDialog()
@@ -56,18 +59,7 @@ class Ui_Form(object):
         self.ui.transfer_mother_form_pointer(self)
         self.window.show()
 
-    def refresh_license_table(self):
-        DB_PATH = parameters.DB_PATH  # bezvremennoe reshenie
-        TABLE_ROW_LIMIT = 10
-        db_connection = create_engine(f'sqlite:///{DB_PATH}').connect()
 
-        data_for_table = pd.read_sql(text(f'SELECT * FROM license'), db_connection).astype(str)
-        self.licensesTableWidget.setRowCount(len(data_for_table))
-
-        for col_num in range(len(data_for_table.columns)):
-            for row_num in range(len(data_for_table)):
-                self.licensesTableWidget.setItem(row_num, col_num,
-                                                   QTableWidgetItem(data_for_table.iloc[row_num, col_num]))
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
@@ -97,7 +89,7 @@ class Ui_Form(object):
         self.addPushButton = QPushButton(Form, clicked = lambda: self.open_license_add())
         self.addPushButton.setObjectName(u"addPushButton")
         self.addPushButton.setGeometry(QRect(250, 570, 181, 81))
-        self.deletePushButton = QPushButton(Form, clicked = lambda: self.delete_license())
+        self.deletePushButton = QPushButton(Form, clicked = lambda: self.mongo_delete_license())
         self.deletePushButton.setObjectName(u"deletePushButton")
         self.deletePushButton.setGeometry(QRect(670, 570, 181, 81))
         self.label = QLabel(Form)

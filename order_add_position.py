@@ -27,6 +27,9 @@ import parameters
 
 class Ui_Form(object):
 
+    def refresh_suppliers_table(self):
+        parameters.refresh_suppliers_table(self)
+
     def transfer_data(self, order_pk, mother_form):
         self.order_pk=order_pk
         self.mother_form=mother_form
@@ -49,20 +52,6 @@ class Ui_Form(object):
         self.mother_form.refresh_order_entries_table()
 
 
-
-
-    def refresh_suppliers_table(self):
-        DB_PATH = parameters.DB_PATH  # bezvremennoe reshenie
-        TABLE_ROW_LIMIT = 10
-        db_connection = create_engine(f'sqlite:///{DB_PATH}').connect()
-
-        data_for_table = pd.read_sql(text(f'SELECT goods.pk,goods.name,unit.name AS unit FROM goods LEFT JOIN unit ON goods.unit = unit.pk'), db_connection).astype(str)
-        self.goodsTableWidget.setRowCount(len(data_for_table))
-
-        for col_num in range(len(data_for_table.columns)):
-            for row_num in range(len(data_for_table)):
-                self.goodsTableWidget.setItem(row_num, col_num,
-                                                 QTableWidgetItem(data_for_table.iloc[row_num, col_num]))
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")

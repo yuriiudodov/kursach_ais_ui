@@ -28,6 +28,10 @@ class Ui_Form(object):
     def transfer_mother_form_pointer(self, mother_form_poiner):
         self.licenses_view_pointer=mother_form_poiner
     def mongo_add_license_to_db(self):  # add order entry mongo
+
+        self.licenses_view_pointer.refresh_license_table()
+        parameters.add_license_to_db(self)
+        self.licenses_view_pointer.refresh_license_table()
         client = pymongo.MongoClient("localhost", 27017)  # mongo penis
         db = client.kursach_ais
         order_entry_mongo = db.license
@@ -41,25 +45,8 @@ class Ui_Form(object):
         order_entry_mongo.insert_one(post)
         self.licenses_view_pointer.refresh_license_table()
         print(post)
-    def add_license_to_db(self):
-        DB_PATH = parameters.DB_PATH  # bezvremennoe reshenie
-        VetDbConnnection = QSqlDatabase.addDatabase("QSQLITE")
-        VetDbConnnection.setDatabaseName(DB_PATH)
-        VetDbConnnection.open()
-        VetTableQuery = QSqlQuery()
-        vet_query_str = """INSERT INTO license (license_name, date, expiration_date, key) 
-        VALUES (:license_name, :date, :expiration_date, :key)"""
-        VetTableQuery.prepare(vet_query_str)
-        VetTableQuery.bindValue(":license_name", self.licenseNameLineEdit.text())
-        VetTableQuery.bindValue(":date", parameters.date_format(self.dateEdit.date().getDate()))
-        VetTableQuery.bindValue(":expiration_date", parameters.date_format(self.expirationDateEdit.date().getDate()))
-        VetTableQuery.bindValue(":key", str(self.keyTextEdit.toPlainText()))
 
-        uspeh = VetTableQuery.exec()
-        print(self.dateEdit.date().getDate(), uspeh)
-        self.licenses_view_pointer.refresh_license_table()
-        self.mongo_add_license_to_db()
-        VetDbConnnection.close()
+
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
@@ -76,7 +63,7 @@ class Ui_Form(object):
 
         self.gridLayout.addWidget(self.label_3, 6, 0, 1, 1)
 
-        self.confirmButton = QPushButton(Form, clicked = lambda:self.add_license_to_db())
+        self.confirmButton = QPushButton(Form, clicked = lambda:self.mongo_add_license_to_db())
         self.confirmButton.setObjectName(u"confirmButton")
         sizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)

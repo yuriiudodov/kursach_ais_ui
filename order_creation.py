@@ -25,6 +25,10 @@ import parameters
 
 
 class Ui_Form(object):
+    def refresh_order_entries_table(self):
+        parameters.refresh_order_entries_table(self)
+    def __init__(self):
+        self.refresh_order_entries_table=parameters.refresh_order_entries_table()
 
     def change_order(self, order_num):
         self.order_num = order_num
@@ -59,18 +63,7 @@ class Ui_Form(object):
         self.supplier=supplier
         self.date=date
 
-    def refresh_order_entries_table(self): #aka positions table widget
-        DB_PATH = parameters.DB_PATH  # bezvremennoe reshenie
-        TABLE_ROW_LIMIT = 10
-        db_connection = create_engine(f'sqlite:///{DB_PATH}').connect()
 
-        data_for_table = pd.read_sql(text(f'SELECT pk, name, price, count, (count*price) FROM order_entry WHERE related_to_order={str(self.order_num)}'), db_connection).astype(str)
-        self.positionsTableWidget.setRowCount(len(data_for_table))
-
-        for col_num in range(len(data_for_table.columns)):
-            for row_num in range(len(data_for_table)):
-                self.positionsTableWidget.setItem(row_num, col_num,
-                                                 QTableWidgetItem(data_for_table.iloc[row_num, col_num]))
 
     def setupUi(self, Form):
         if not Form.objectName():

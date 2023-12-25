@@ -29,6 +29,7 @@ class Ui_Form(object):
         self.licenses_view_pointer=mother_form_poiner
 
     def mongo_write_license_to_db(self):  # add order entry mongo
+        parameters.write_license_to_db(self)
         client = pymongo.MongoClient("localhost", 27017)  # mongo penis
         db = client.kursach_ais
         order_entry_mongo = db.license
@@ -44,25 +45,7 @@ class Ui_Form(object):
         order_entry_mongo.update_one(myquery, newvalues)
         self.licenses_view_pointer.refresh_license_table()
         print(post, "edited")
-    def write_license_to_db(self):
-        DB_PATH = parameters.DB_PATH  # bezvremennoe reshenie
-        VetDbConnnection = QSqlDatabase.addDatabase("QSQLITE")
-        VetDbConnnection.setDatabaseName(DB_PATH)
-        VetDbConnnection.open()
-        VetTableQuery = QSqlQuery()
-        VetTableQuery.prepare("""
-                                UPDATE license SET license_name=:license_name, date=:date, expiration_date=:expiration_date, key=:license_key WHERE pk=:pk
-                                  """)
-        VetTableQuery.bindValue(":license_name", self.licenseNameLineEdit.text())
-        VetTableQuery.bindValue(":date", parameters.date_format(self.dateEdit.date().getDate()))
-        VetTableQuery.bindValue(":expiration_date", parameters.date_format(self.expirationDateEdit.date().getDate()))
-        VetTableQuery.bindValue(":license_key", self.keyTextEdit.toPlainText())
 
-        VetTableQuery.bindValue(":pk", self.pk)
-        uspeh = VetTableQuery.exec()
-        print("USPEH BLYAT&", uspeh, VetTableQuery.lastQuery())
-        self.mongo_write_license_to_db()
-        VetDbConnnection.close()
     def transfer_data(self, pk, name, date, expiration_date, license_key):
         self.pk=pk
         self.name=name
@@ -87,7 +70,7 @@ class Ui_Form(object):
 
         self.gridLayout.addWidget(self.label_3, 6, 0, 1, 1)
 
-        self.confirmButton = QPushButton(Form, clicked = lambda: self.write_license_to_db())
+        self.confirmButton = QPushButton(Form, clicked = lambda: self.mongo_write_license_to_db())
         self.confirmButton.setObjectName(u"confirmButton")
         sizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
