@@ -4,6 +4,20 @@ from PySide6.QtSql import QSqlDatabase, QSqlQuery
 from sqlalchemy import create_engine, text
 
 DB_PATH = "DB.sqlite3"
+
+
+def add_position_to_order(self):  # add order entry
+
+    VetDbConnnection = QSqlDatabase.addDatabase("QSQLITE")
+    VetDbConnnection.setDatabaseName(DB_PATH)
+    VetDbConnnection.open()
+    VetTableQuery = QSqlQuery()
+    VetTableQuery.prepare(
+        f"INSERT INTO order_entry (name, count, price, related_to_order, sum) "
+        f"VALUES ('{self.goodsTableWidget.item(self.goodsTableWidget.currentRow(), 1).text()}','{str(self.countSpinBox.value())}','{self.priceLineEdit.text()}','{self.order_pk}','{self.label.text()}')"
+    )
+    uspeh = VetTableQuery.exec()
+    VetDbConnnection.close()
 def date_format(date):
     date_day=str(date[2])
     date_month = str(date[1])

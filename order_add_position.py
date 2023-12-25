@@ -33,6 +33,7 @@ class Ui_Form(object):
 
 
     def mongo_add_position_to_order(self):  # add order entry mongo
+        parameters.add_position_to_order(self)
         client = pymongo.MongoClient("localhost", 27017)  # mongo penis
         db = client.kursach_ais
         order_entry_mongo = db.order_entry
@@ -45,22 +46,6 @@ class Ui_Form(object):
         }
         order_entry_mongo.insert_one(post)
         print(post)
-
-
-    def add_position_to_order(self):#add order entry
-
-
-        VetDbConnnection = QSqlDatabase.addDatabase("QSQLITE")
-        VetDbConnnection.setDatabaseName(parameters.DB_PATH)
-        VetDbConnnection.open()
-        VetTableQuery = QSqlQuery()
-        VetTableQuery.prepare(
-                f"INSERT INTO order_entry (name, count, price, related_to_order, sum) "
-                f"VALUES ('{self.goodsTableWidget.item(self.goodsTableWidget.currentRow(), 1 ).text()}','{str(self.countSpinBox.value())}','{self.priceLineEdit.text()}','{self.order_pk}','{self.label.text()}')"
-                 )
-        uspeh = VetTableQuery.exec()
-        VetDbConnnection.close()
-        self.mongo_add_position_to_order()
         self.mother_form.refresh_order_entries_table()
 
 
@@ -82,7 +67,7 @@ class Ui_Form(object):
         if not Form.objectName():
             Form.setObjectName(u"Form")
         Form.resize(834, 519)
-        self.confirmPushButton = QPushButton(Form, clicked = lambda:self.add_position_to_order())
+        self.confirmPushButton = QPushButton(Form, clicked = lambda:self.mongo_add_position_to_order())
         self.confirmPushButton.setObjectName(u"confirmPushButton")
         self.confirmPushButton.setGeometry(QRect(670, 460, 121, 51))
         self.cancelPushButton = QPushButton(Form)
