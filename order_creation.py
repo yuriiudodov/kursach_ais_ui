@@ -16,26 +16,109 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QHeaderView, QLabel, QPushButton,
-                               QSizePolicy, QTableWidget, QTableWidgetItem, QWidget, QDialog)
+                               QSizePolicy, QTableWidget, QTableWidgetItem, QWidget, QDialog, QMessageBox)
 from sqlalchemy import create_engine, text
 
 import docs_browser
 import order_add_position
 import parameters
 
+import pandas as pd
+import os
+import shutil
+
+from time import time, sleep
+
+from sqlalchemy import text, create_engine
+from openpyxl import load_workbook
+
+from openpyxl.styles import Alignment
+from parameters import DB_PATH, EXCEL_TEMPLATE_PATH, MAIN_REPORT_PAGE, EXCEL_HEADER_ROWS, SAVE_DIR, WRAP_COLUMNS, NAMES_TXT_PATH
+
+
 
 class Ui_Form(object):
     def refresh_order_entries_table(self):
         parameters.refresh_order_entries_table(self)
-    def __init__(self):
-        self.refresh_order_entries_table=parameters.refresh_order_entries_table()
+
+    def create_report(self, selected_items):
+        self.vet_db_connection = create_engine(f'sqlite:///{DB_PATH}').connect()
+        settlement = selected_items['settlement']
+        city = selected_items['city']
+        city_name = 1488#db_get_city_name(city)
+        settlement_name =1488 #db_get_settlement(settlement)
+
+        report_entries = pd.read_sql(text(
+            f'''SELECT household.owner, city.name, household.address, report_entries.specie, report_entries.count, report_entries.data_from_administration, report_entries.prevous_count, report_entries.is_conditions_good FROM report_entries
+                --присоединяем данные о хозяйстве (владелец и его адрес в рамках города)
+                INNER JOIN household
+                ON household.pk = report_entries.household
+
+                --присоединяем данные о городе (для хозяйства, уточняем адрес) 
+                INNER JOIN city
+                ON city.pk = household.belongs_to_city
+                WHERE city.pk = {city}
+
+            '''
+        ), self.vet_db_connection)
+        print(report_entries)
+        # ----------------------------------------------------------------------------------дефолтные прелбразования данныхз ради некривого форматирования--------------------------------------------------------------------------------------------------------------------------
+        report_entries.insert(0, 'position', report_entries['owner'].astype('category').cat.codes + 1)
+        report_entries = report_entries.sort_values('owner')
+        report_entries.loc[
+            report_entries[['owner']].duplicated(keep='first'), ['owner', 'address', 'name', 'position']] = ''
+        report_entries['address'] = report_entries.apply(
+            lambda x: f"{x['name']}, {x['address']}" if x['address'] else "", axis=1)
+        report_entries = report_entries.drop(columns='name')
+        print(report_entries)
+
+        # ----------------------------------------------------------------------------------создаем диреткории если нет и копируем шаблон, затем заполняем его--------------------------------------------------------------------------------------------------------------------------
+        os.makedirs(SAVE_DIR, exist_ok=True)
+        filename = os.path.join(SAVE_DIR, f'Отчёт{int(time())}.xlsx')
+        shutil.copy(EXCEL_TEMPLATE_PATH, filename)
+        current_report = pd.ExcelWriter(filename, engine='openpyxl', mode='a')
+
+        # заполнение данными
+        with open(NAMES_TXT_PATH, 'r', encoding='utf-8') as names_file:
+            names = [line.strip() for line in names_file.readlines()]
+        names = {'VET_CEO': names[0], 'VET_DOC': names[1], 'VET_DEP': names[2], 'CITY': city_name,
+                 'SETTLEMENT': settlement_name}
+
+        page = current_report.sheets[MAIN_REPORT_PAGE]
+        message = QMessageBox()
+        message.setText("loh")
+        message.show()
+        sleep(1.5)
+
+        def fill_placeholders(names, cell):
+            if isinstance(cell.value, str):
+                for placeholder, name in names.items():
+                    cell.value = cell.value.replace(placeholder, name)
+
+        for row in range(1, page.max_row + 1):
+            fill_placeholders(names, page.cell(row, 1))
+
+        page.insert_rows(EXCEL_HEADER_ROWS + 1, amount=report_entries.shape[0])
+        for row in range(report_entries.shape[0]):
+            for col, col_name in enumerate(report_entries.columns):
+                cell = page.cell(row + EXCEL_HEADER_ROWS + 1, col + 1)
+                cell.value = report_entries.iloc[row, col]
+                # перенос по словам
+                if col_name in WRAP_COLUMNS:
+                    cell.alignment = cell.alignment.copy(wrapText=True)
+
+        current_report.close()
 
     def change_order(self, order_num):
+        print("vot tut nado menyat postavshikai pokupatela v shapke")
         self.order_num = order_num
         self.label_5.setText(str(self.order_num))
         self.refresh_order_entries_table()
+        self.label_4.setText(parameters.get_supplier_for_order(order_num))
+        self.label_7.setText(parameters.get_customer_for_order(order_num))
 
     def __init__(self):
+        #self.refresh_order_entries_table = parameters.refresh_order_entries_table()
         self.order_num = parameters.just_give_doc_number()#pk+1 dayot nomer dokumenta dalya interfeisa, iz nego mozhno poluchit pk documenta otnyav 1
 
     def create_new_order(self):

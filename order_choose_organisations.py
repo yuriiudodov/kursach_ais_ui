@@ -37,30 +37,7 @@ class Ui_Form(object):
         self.ui.setupUi(self.window)
         self.window.show()
 
-    def refresh_customers_table(self):
-        DB_PATH = parameters.DB_PATH  # bezvremennoe reshenie
-        TABLE_ROW_LIMIT = 10
-        db_connection = create_engine(f'sqlite:///{DB_PATH}').connect()
 
-        data_for_table = pd.read_sql(text(f'SELECT * FROM customer'), db_connection).astype(str)
-        self.customerTableWidget.setRowCount(len(data_for_table))
-
-        for col_num in range(len(data_for_table.columns)):
-            for row_num in range(len(data_for_table)):
-                self.customerTableWidget.setItem(row_num, col_num,
-                                                 QTableWidgetItem(data_for_table.iloc[row_num, col_num]))
-    def refresh_suppliers_table(self):
-        DB_PATH = parameters.DB_PATH  # bezvremennoe reshenie
-        TABLE_ROW_LIMIT = 10
-        db_connection = create_engine(f'sqlite:///{DB_PATH}').connect()
-
-        data_for_table = pd.read_sql(text(f'SELECT * FROM supplier'), db_connection).astype(str)
-        self.supplierTableWidget.setRowCount(len(data_for_table))
-
-        for col_num in range(len(data_for_table.columns)):
-            for row_num in range(len(data_for_table)):
-                self.supplierTableWidget.setItem(row_num, col_num,
-                                                 QTableWidgetItem(data_for_table.iloc[row_num, col_num]))
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
@@ -133,8 +110,8 @@ class Ui_Form(object):
         self.cancelPushButton.setMinimumSize(QSize(0, 60))
 
         self.gridLayout.addWidget(self.cancelPushButton, 2, 0, 2, 1)
-        self.refresh_customers_table()
-        self.refresh_suppliers_table()
+        parameters.refresh_customers_table_order(self)
+        parameters.refresh_suppliers_table_order(self)
 
         self.retranslateUi(Form)
 

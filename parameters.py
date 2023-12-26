@@ -4,9 +4,51 @@ from PySide6.QtSql import QSqlDatabase, QSqlQuery
 from PySide6.QtWidgets import QTableWidgetItem
 from sqlalchemy import create_engine, text
 
-DB_PATH = "DB.sqlite3"
+DB_PATH = "mongoconf"#sqite db
+  # NAKONEC TO BLYAT YA SDELAL NORMALNEE
+EXCEL_TEMPLATE_PATH     = 'template.xlsx'
+EXCEL_HEADER_ROWS       = 5
+MAIN_REPORT_PAGE        = 'Отчет'
+WRAP_COLUMNS            = ['is_conditions_good', 'specie']
+SAVE_DIR                = 'C:/TAURUS'
+NAMES_TXT_PATH          = 'names.txt'
+DATABASE_DRIVER_QT      = 'QSQLITE'  #unused
+DATABASE_DRIVER_PANDAS  = 'sqlite'
 
 
+def get_customer_for_order(order_pk):
+    db_connection = create_engine(f'sqlite:///{DB_PATH}').connect()
+    peka =pd.read_sql(f'''select customer_pk from orderj where pk = {order_pk} ''', db_connection).iloc[0][0]
+    return pd.read_sql(f'''SELECT (name ||" ИНН: "|| INN ||" КПП: "|| KPP) AS gay FROM customer WHERE pk={peka}''', db_connection).iloc[0][0]
+
+def get_supplier_for_order(order_pk):
+    db_connection = create_engine(f'sqlite:///{DB_PATH}').connect()
+    peka =pd.read_sql(f'''select supplier_pk from orderj where pk = {order_pk} ''', db_connection).iloc[0][0]
+    return pd.read_sql(f'''SELECT (name ||" ИНН: "|| INN ||" КПП: "|| KPP) AS gay FROM supplier WHERE pk={peka}''', db_connection).iloc[0][0]
+def refresh_customers_table_order(self):  # order choose orgaisations
+    TABLE_ROW_LIMIT = 10
+    db_connection = create_engine(f'sqlite:///{DB_PATH}').connect()
+
+    data_for_table = pd.read_sql(text(f'SELECT * FROM customer'), db_connection).astype(str)
+    self.customerTableWidget.setRowCount(len(data_for_table))
+
+    for col_num in range(len(data_for_table.columns)):
+        for row_num in range(len(data_for_table)):
+            self.customerTableWidget.setItem(row_num, col_num,
+                                             QTableWidgetItem(data_for_table.iloc[row_num, col_num]))
+
+
+def refresh_suppliers_table_order(self):  # order choose orgaisations
+    TABLE_ROW_LIMIT = 10
+    db_connection = create_engine(f'sqlite:///{DB_PATH}').connect()
+
+    data_for_table = pd.read_sql(text(f'SELECT * FROM supplier'), db_connection).astype(str)
+    self.supplierTableWidget.setRowCount(len(data_for_table))
+
+    for col_num in range(len(data_for_table.columns)):
+        for row_num in range(len(data_for_table)):
+            self.supplierTableWidget.setItem(row_num, col_num,
+                                             QTableWidgetItem(data_for_table.iloc[row_num, col_num]))
 def refresh_suppliers_table(self):  # order_add_position
      # bezvremennoe reshenie
     TABLE_ROW_LIMIT = 10
