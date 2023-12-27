@@ -7,10 +7,10 @@ from sqlalchemy import create_engine, text
 DB_PATH = "mongoconf"#sqite db
   # NAKONEC TO BLYAT YA SDELAL NORMALNEE
 EXCEL_TEMPLATE_PATH     = 'template.xlsx'
-EXCEL_HEADER_ROWS       = 5
+EXCEL_HEADER_ROWS       = 9#5
 MAIN_REPORT_PAGE        = 'Отчет'
 WRAP_COLUMNS            = ['is_conditions_good', 'specie']
-SAVE_DIR                = 'C:/TAURUS'
+SAVE_DIR                = 'C:/AIS_KURSCACH_UI'
 NAMES_TXT_PATH          = 'names.txt'
 DATABASE_DRIVER_QT      = 'QSQLITE'  #unused
 DATABASE_DRIVER_PANDAS  = 'sqlite'

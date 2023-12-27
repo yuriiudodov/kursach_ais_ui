@@ -41,36 +41,36 @@ class Ui_Form(object):
     def refresh_order_entries_table(self):
         parameters.refresh_order_entries_table(self)
 
-    def create_report(self, selected_items):
+    def create_report(self):
+        print("SHIT STARTED")
         self.vet_db_connection = create_engine(f'sqlite:///{DB_PATH}').connect()
-        settlement = selected_items['settlement']
-        city = selected_items['city']
-        city_name = 1488#db_get_city_name(city)
-        settlement_name =1488 #db_get_settlement(settlement)
+        supplier_text = parameters.get_supplier_for_order(self.order_num)
+        customer_text = parameters.get_customer_for_order(self.order_num)
 
         report_entries = pd.read_sql(text(
-            f'''SELECT household.owner, city.name, household.address, report_entries.specie, report_entries.count, report_entries.data_from_administration, report_entries.prevous_count, report_entries.is_conditions_good FROM report_entries
-                --присоединяем данные о хозяйстве (владелец и его адрес в рамках города)
-                INNER JOIN household
-                ON household.pk = report_entries.household
-
-                --присоединяем данные о городе (для хозяйства, уточняем адрес) 
-                INNER JOIN city
-                ON city.pk = household.belongs_to_city
-                WHERE city.pk = {city}
-
-            '''
+            f'''SELECT * FROM order_entry WHERE related_to_order={self.order_num}'''#HYETA MOZHET NE SRABOTAT
+            # f'''SELECT household.owner, city.name, household.address, report_entries.specie, report_entries.count, report_entries.data_from_administration, report_entries.prevous_count, report_entries.is_conditions_good FROM report_entries
+            #     --присоединяем данные о хозяйстве (владелец и его адрес в рамках города)
+            #     INNER JOIN household
+            #     ON household.pk = report_entries.household
+            #
+            #     --присоединяем данные о городе (для хозяйства, уточняем адрес)
+            #     INNER JOIN city
+            #     ON city.pk = household.belongs_to_city
+            #     WHERE city.pk = {city}
+            #
+            # '''
         ), self.vet_db_connection)
         print(report_entries)
         # ----------------------------------------------------------------------------------дефолтные прелбразования данныхз ради некривого форматирования--------------------------------------------------------------------------------------------------------------------------
-        report_entries.insert(0, 'position', report_entries['owner'].astype('category').cat.codes + 1)
-        report_entries = report_entries.sort_values('owner')
-        report_entries.loc[
-            report_entries[['owner']].duplicated(keep='first'), ['owner', 'address', 'name', 'position']] = ''
-        report_entries['address'] = report_entries.apply(
-            lambda x: f"{x['name']}, {x['address']}" if x['address'] else "", axis=1)
-        report_entries = report_entries.drop(columns='name')
-        print(report_entries)
+        # report_entries.insert(0, 'position', report_entries['owner'].astype('category').cat.codes + 1)
+        # report_entries = report_entries.sort_values('owner')
+        # report_entries.loc[
+        #     report_entries[['owner']].duplicated(keep='first'), ['owner', 'address', 'name', 'position']] = ''
+        # report_entries['address'] = report_entries.apply(
+        #     lambda x: f"{x['name']}, {x['address']}" if x['address'] else "", axis=1)
+        # report_entries = report_entries.drop(columns='name')
+        # print(report_entries)
 
         # ----------------------------------------------------------------------------------создаем диреткории если нет и копируем шаблон, затем заполняем его--------------------------------------------------------------------------------------------------------------------------
         os.makedirs(SAVE_DIR, exist_ok=True)
@@ -79,10 +79,11 @@ class Ui_Form(object):
         current_report = pd.ExcelWriter(filename, engine='openpyxl', mode='a')
 
         # заполнение данными
-        with open(NAMES_TXT_PATH, 'r', encoding='utf-8') as names_file:
-            names = [line.strip() for line in names_file.readlines()]
-        names = {'VET_CEO': names[0], 'VET_DOC': names[1], 'VET_DEP': names[2], 'CITY': city_name,
-                 'SETTLEMENT': settlement_name}
+        # with open(NAMES_TXT_PATH, 'r', encoding='utf-8') as names_file:
+        #     names = [line.strip() for line in names_file.readlines()]
+        names = {
+            'ORDERN': self.order_num, 'ORDERD': self.date, 'SUPPLIERPH': parameters.get_supplier_for_order(self.order_num), 'CUSTOMERPH': parameters.get_customer_for_order(self.order_num),
+                 }
 
         page = current_report.sheets[MAIN_REPORT_PAGE]
         message = QMessageBox()
@@ -96,7 +97,7 @@ class Ui_Form(object):
                     cell.value = cell.value.replace(placeholder, name)
 
         for row in range(1, page.max_row + 1):
-            fill_placeholders(names, page.cell(row, 1))
+             fill_placeholders(names, page.cell(row, 1))
 
         page.insert_rows(EXCEL_HEADER_ROWS + 1, amount=report_entries.shape[0])
         for row in range(report_entries.shape[0]):
@@ -110,7 +111,7 @@ class Ui_Form(object):
         current_report.close()
 
     def change_order(self, order_num):
-        print("vot tut nado menyat postavshikai pokupatela v shapke")
+        #print("vot tut nado menyat postavshikai pokupatela v shapke")
         self.order_num = order_num
         self.label_5.setText(str(self.order_num))
         self.refresh_order_entries_table()
@@ -216,7 +217,7 @@ class Ui_Form(object):
         self.deletePushButton = QPushButton(Form)
         self.deletePushButton.setObjectName(u"deletePushButton")
         self.deletePushButton.setGeometry(QRect(170, 580, 141, 81))
-        self.createOrderPushButton = QPushButton(Form)
+        self.createOrderPushButton = QPushButton(Form, clicked = lambda:self.create_report())
         self.createOrderPushButton.setObjectName(u"createOrderPushButton")
         self.createOrderPushButton.setGeometry(QRect(600, 580, 141, 81))
         self.newOrderPushButton = QPushButton(Form, clicked = lambda:self.create_new_order())#new order idk
