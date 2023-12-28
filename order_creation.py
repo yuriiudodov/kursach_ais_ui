@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
+import pymongo
 ################################################################################
 ## Form generated from reading UI file 'order_creation.ui'
 ##
@@ -48,7 +49,7 @@ class Ui_Form(object):
         customer_text = parameters.get_customer_for_order(self.order_num)
 
         report_entries = pd.read_sql(text(
-            f'''SELECT * FROM order_entry WHERE related_to_order={self.order_num}'''#HYETA MOZHET NE SRABOTAT
+            f'''SELECT pk, name, count, unit, price, sum FROM order_entry WHERE related_to_order={self.order_num}'''#HYETA MOZHET NE SRABOTAT
             # f'''SELECT household.owner, city.name, household.address, report_entries.specie, report_entries.count, report_entries.data_from_administration, report_entries.prevous_count, report_entries.is_conditions_good FROM report_entries
             #     --присоединяем данные о хозяйстве (владелец и его адрес в рамках города)
             #     INNER JOIN household
@@ -61,6 +62,10 @@ class Ui_Form(object):
             #
             # '''
         ), self.vet_db_connection)
+
+        #self.sum = report_entries["sum"].sum()
+        #self.total_count = report_entries["count"].sum()
+
         print(report_entries)
         # ----------------------------------------------------------------------------------дефолтные прелбразования данныхз ради некривого форматирования--------------------------------------------------------------------------------------------------------------------------
         # report_entries.insert(0, 'position', report_entries['owner'].astype('category').cat.codes + 1)
@@ -83,6 +88,8 @@ class Ui_Form(object):
         #     names = [line.strip() for line in names_file.readlines()]
         names = {
             'ORDERN': self.order_num, 'ORDERD': self.date, 'SUPPLIERPH': parameters.get_supplier_for_order(self.order_num), 'CUSTOMERPH': parameters.get_customer_for_order(self.order_num),
+            'COUNT': str(report_entries["count"].sum()),'SUM11TOTAL': str(report_entries["sum"].sum()),'SUMTOTALNDS': str(report_entries["sum"].sum()*0.18),
+            'SUMSUMTOTALPLUS': str(report_entries["sum"].sum()*1.18)
                  }
 
         page = current_report.sheets[MAIN_REPORT_PAGE]
@@ -97,7 +104,8 @@ class Ui_Form(object):
                     cell.value = cell.value.replace(placeholder, name)
 
         for row in range(1, page.max_row + 1):
-             fill_placeholders(names, page.cell(row, 1))
+            for col in range(1, page.max_column + 1):
+                fill_placeholders(names, page.cell(row, col))
 
         page.insert_rows(EXCEL_HEADER_ROWS + 1, amount=report_entries.shape[0])
         for row in range(report_entries.shape[0]):
@@ -128,6 +136,12 @@ class Ui_Form(object):
         self.order_num=parameters.just_give_doc_number()
         self.label_5.setText(str(self.order_num))
         self.refresh_order_entries_table()
+        client = pymongo.MongoClient("localhost", 27017)  # mongo penis
+        db = client["kursach_ais"]
+        pk_collection = db["orderj"]
+        pk_collection.insert_many([
+            {"pk": self.order_num, "kostyl": 'ass', "date": self.label_6, "supplier": self.supplier, "customer": self.customer},
+        ]);
 
     def open_docs_browser(self):#add order entry window
         self.window = QDialog()
